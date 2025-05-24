@@ -4,10 +4,10 @@
 
 ## 可用加载项
 
+### [🤖 Browser Use](https://github.com/browser-use/web-ui)
+
+Browser Use 使AI代理可以访问网页，轻松运行自动化任务。
+
 ### [📺 LibreTV](https://github.com/LibreSpark/LibreTV)
 
-![Supports aarch64 Architecture][aarch64-shield]
-![Supports amd64 Architecture][amd64-shield]
-![Supports armv7 Architecture][armv7-shield]
-
-LibreTV 是一个轻量级、免费的在线视频搜索与观看平台，提供来自多个视频源的内容搜索与播放服务。无需注册，即开即用，支持多种设备访问。项目结合了前端技术和后端代理功能，可部署在支持服务端功能的各类网站托管服务上。
+LibreTV 是一个轻量级、免费的在线视频搜索与观看平台，提供来自多个视频源的内容搜索与播放服务。自由观影，畅享精彩。

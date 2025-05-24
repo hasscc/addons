@@ -16,3 +16,4 @@ RUN chmod a+x /run.sh
 
 ENTRYPOINT ["/run.sh"]
 CMD ["nginx", "-g", "daemon off;"]
+HEALTHCHECK --interval=1m CMD nc -zn 0.0.0.0 80 || exit 1

@@ -1,0 +1,33 @@
+name: Browser Use
+slug: browser-use
+description: Run AI Agent in the browser
+version: 2.0.0
+url: https://github.com/browser-use/web-ui
+webui: http://[HOST]:[PORT:27788]
+panel_icon: mdi:robot-love
+init: false
+arch:
+  - aarch64
+  - amd64
+ports:
+  7788/tcp: 27788
+  6080/tcp: 26080
+  5901/tcp: 25901
+  9222/tcp: 29222
+map:
+  - share
+  - media
+schema:
+  envs:
+    - match(^[A-Z0-9_]+=.*$)
+options:
+  envs:
+    - OPENAI_ENDPOINT=https://api.openai.com/v1
+    - OPENAI_API_KEY=
+    - ANTHROPIC_ENDPOINT=https://api.anthropic.com
+    - ANTHROPIC_API_KEY=
+    - GOOGLE_API_KEY=
+    - DEEPSEEK_ENDPOINT=https://api.deepseek.com
+    - DEEPSEEK_API_KEY=
+    - BROWSER_USE_LOGGING_LEVEL=info
+    - VNC_PASSWORD=
