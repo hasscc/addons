@@ -11,3 +11,7 @@ Browser Use 使AI代理可以访问网页，轻松运行自动化任务。
 ### [📺 LibreTV](https://github.com/LibreSpark/LibreTV)
 
 LibreTV 是一个轻量级、免费的在线视频搜索与观看平台，提供来自多个视频源的内容搜索与播放服务。自由观影，畅享精彩。
+
+### [📲 Scrcpy Web](https://github.com/NetrisTV/ws-scrcpy)
+
+随时随地显示并控制你的 Android 设备。
