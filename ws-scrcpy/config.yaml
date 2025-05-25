@@ -1,0 +1,21 @@
+name: Scrcpy Web
+slug: scrcpy
+description: Web client prototype for scrcpy
+version: 0.8.1
+url: https://github.com/NetrisTV/ws-scrcpy
+webui: http://[HOST]:[PORT:25555]
+panel_icon: mdi:android
+init: false
+arch:
+  - aarch64
+  - amd64
+ports:
+  8000/tcp: 25555
+map:
+  - share
+  - media
+schema:
+  hosts:
+    - match(^\d[\d.]+:\d+$)
+options:
+  hosts: []
