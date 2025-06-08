@@ -5,6 +5,7 @@ version: 0.8.1
 url: https://github.com/NetrisTV/ws-scrcpy
 webui: http://[HOST]:[PORT:25555]
 panel_icon: mdi:android
+ingress: true
 init: false
 arch:
   - aarch64

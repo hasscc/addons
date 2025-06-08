@@ -1,30 +1,40 @@
 FROM ghcr.nju.edu.cn/basepkg/alpine
 
 ARG VERSION=0.8.1
+ARG GITHUB_DOMAIN=ghrp.hacs.vip
+ARG BASHIO_VERSION=v0.17.0
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
-    apk add --no-cache unzip nodejs npm make g++ python3 android-tools jq && \
-    npm install -g pnpm node-gyp
+    apk add --no-cache bash curl unzip jq nodejs npm python3 android-tools nginx && \
+    npm config set registry https://registry.npmmirror.com && \
+    npm install -g pnpm node-gyp; \
+    mkdir -p bashio; \
+    wget -O - https://${GITHUB_DOMAIN}/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz | tar zxvf - --strip 1 -C bashio; \
+    mv bashio/lib /usr/lib/bashio; \
+    ln -s /usr/lib/bashio/bashio /usr/bin/bashio; \
+    rm -rf bashio;
 
 RUN set -eux; \
-    wget https://github.com/NetrisTV/ws-scrcpy/archive/refs/tags/v$VERSION.zip; \
+    wget https://${GITHUB_DOMAIN}/NetrisTV/ws-scrcpy/archive/refs/tags/v$VERSION.zip; \
     unzip *.zip; \
     mv ws-scrcpy-$VERSION /app; \
     rm -rf *.zip
 
-COPY run.sh /
+COPY rootfs /
 WORKDIR /app
 
 RUN set -eux; \
+    apk add --no-cache --virtual .build-deps make g++; \
     npm install; \
     npm run dist; \
     rm -rf node_modules package-lock.json; \
     npm install --production; \
+    rm -rf /root/.npm /tmp/*; \
+    apk del --no-cache .build-deps; \
     chmod a+x /run.sh; \
     pwd
 
 VOLUME /root/.android
 
-ENTRYPOINT ["/run.sh"]
-CMD ["node", "dist/index.js"]
-HEALTHCHECK --interval=1m CMD nc -zn 0.0.0.0 8000 || exit 1
+CMD ["/run.sh", "node", "dist/index.js"]
+HEALTHCHECK --interval=1m --start-period=30s CMD nc -zn 0.0.0.0 8000 || exit 1
