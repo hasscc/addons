@@ -5,23 +5,18 @@ ARG GITHUB_DOMAIN=ghrp.hacs.vip
 ARG BASHIO_VERSION=v0.17.0
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
-    apk add --no-cache bash curl unzip jq nodejs npm python3 android-tools nginx && \
+    apk add --no-cache bash curl jq nodejs npm python3 android-tools nginx && \
     npm config set registry https://registry.npmmirror.com && \
     npm install -g pnpm node-gyp; \
     mkdir -p bashio; \
-    wget -O - https://${GITHUB_DOMAIN}/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz | tar zxvf - --strip 1 -C bashio; \
+    wget https://${GITHUB_DOMAIN}/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz -O- | tar zxvf - --strip 1 -C bashio; \
     mv bashio/lib /usr/lib/bashio; \
     ln -s /usr/lib/bashio/bashio /usr/bin/bashio; \
     rm -rf bashio;
 
-RUN set -eux; \
-    wget https://${GITHUB_DOMAIN}/NetrisTV/ws-scrcpy/archive/refs/tags/v$VERSION.zip; \
-    unzip *.zip; \
-    mv ws-scrcpy-$VERSION /app; \
-    rm -rf *.zip
-
 COPY rootfs /
 WORKDIR /app
+RUN wget https://${GITHUB_DOMAIN}/NetrisTV/ws-scrcpy/archive/refs/tags/v$VERSION.tar.gz -O- | tar zxvf - --strip 1 -C /app
 
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps make g++; \
@@ -32,7 +27,7 @@ RUN set -eux; \
     rm -rf /root/.npm /tmp/*; \
     apk del --no-cache .build-deps; \
     chmod a+x /run.sh; \
-    pwd
+    pwd;
 
 VOLUME /root/.android
 
