@@ -1,7 +1,7 @@
 name: MoonTV
 slug: moontv
 description: MoonTV - 一个开箱即用的、跨平台的影视聚合播放器
-version: 2025.7.2
+version: 2025.7.11
 url: https://github.com/senshinya/MoonTV
 webui: http://[HOST]:[PORT:28866]
 panel_icon: mdi:television
