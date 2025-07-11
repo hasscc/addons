@@ -18,5 +18,7 @@ map:
   - media
 schema:
   password: password?
+  resource: url?
 options:
   password: ''
+  resource: https://cfrp.hacs.vip/raw/senshinya/MoonTV/refs/heads/main/config.json
