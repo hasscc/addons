@@ -1,4 +1,4 @@
-FROM ghcr.nju.edu.cn/senshinya/moontv:d6467db6cc487eb3fedbe77ff1c8263602941f45 AS builder
+FROM ghcr.nju.edu.cn/samqin123/moontv:sha-e87544a AS builder
 FROM ghcr.nju.edu.cn/basepkg/alpine
 
 ARG GITHUB_DOMAIN=ghrp.hacs.vip
