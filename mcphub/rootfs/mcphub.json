@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "time": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-time",
+        "--local-timezone=Asia/Shanghai"
+      ]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-fetch"
+      ]
+    },
+    "notify": {
+      "command": "uvx",
+      "args": [
+        "mcp-notify"
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "admin",
+      "password": "$2b$10$Vt7krIvjNgyN67LXqly0uOcTpN0LI55cYRbcKC71pUDAP0nJ7RPa.",
+      "isAdmin": true
+    }
+  ]
+}

@@ -19,6 +19,11 @@ LibreTV 是一个轻量级、免费的在线视频搜索与观看平台，提供
 MoonTV 是另一个开箱即用的、跨平台的影视聚合播放器，支持多资源搜索、在线播放、收藏同步、播放记录、本地/云端存储，让你可以随时随地畅享海量免费影视内容。
 
 
+### [🌐 MCPHub](https://github.com/samanhappy/mcphub)
+
+MCPHub 通过将多个 MCP（Model Context Protocol）服务器组织为灵活的流式 HTTP 端点，简化了管理与扩展工作。系统支持按需访问全部服务器、单个服务器或按场景分组的服务器集合。
+
+
 ### [📲 Scrcpy Web](https://github.com/NetrisTV/ws-scrcpy) ![ingress](https://img.shields.io/badge/ingress-yes)
 
 随时随地显示并控制你的 Android 设备。

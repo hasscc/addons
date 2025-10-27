@@ -1,0 +1,25 @@
+name: MCPHub
+slug: mcphub
+description: 一站式 MCP 服务器聚合平台
+version: 0.9.16
+url: https://github.com/samanhappy/mcphub
+webui: http://[HOST]:[PORT:26630]
+panel_icon: mdi:hub
+ingress: false
+init: false
+arch:
+  - aarch64
+  - amd64
+ports:
+  3000/tcp: 26630
+map:
+  - addon_config:rw
+  - homeassistant_config:rw
+  - share
+schema:
+  envs:
+    - match(^[A-Z0-9_]+=.*$)
+options:
+  envs:
+    - INIT_TIMEOUT=300000
+    - JWT_SECRET=
