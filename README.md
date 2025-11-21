@@ -24,7 +24,7 @@ MoonTV 是另一个开箱即用的、跨平台的影视聚合播放器，支持�
 MCPHub 通过将多个 MCP（Model Context Protocol）服务器组织为灵活的流式 HTTP 端点，简化了管理与扩展工作。系统支持按需访问全部服务器、单个服务器或按场景分组的服务器集合。
 
 
-### [🎦 Milocl](https://github.com/XiaoMi/xiaomi-miloco)
+### [🎦 Miloco](https://github.com/XiaoMi/xiaomi-miloco)
 
 Xiaomi Local Copilot 以米家摄像机为视觉信息来源，以自研大模型为核心，打通全屋 IoT 设备。基于大模型的开发范式，让用户能够以自然语言定义家庭的各种需求和规则，实现更广泛、更具创意的智能联动。
 
