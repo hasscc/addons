@@ -1,4 +1,4 @@
-FROM ghcr.nju.edu.cn/xiaomi/miloco-backend:latest
+FROM ghcr.nju.edu.cn/xiaomi/miloco-backend:v0.1.1
 
 ARG GITHUB_DOMAIN=ghrp.hacs.vip
 ARG BASHIO_VERSION=v0.17.0
@@ -9,6 +9,7 @@ ENV BACKEND_PORT=28800 \
 COPY rootfs /
 RUN set -eux; \
     chmod a+x /run.sh; \
+    sed -i 's/= MIoTCameraVideoQuality.LOW,/= MIoTCameraVideoQuality.HIGH,/' miot_kit/miot/camera.py; \
     \
     sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources; \
     apt update; \
