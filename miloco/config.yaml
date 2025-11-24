@@ -22,5 +22,5 @@ schema:
 options:
   envs:
     - BACKEND_PORT=28800
-    - BACKEND_LOG_LEVEL=info
+    - BACKEND_LOG_LEVEL=warning
     - TZ=Asia/Shanghai
