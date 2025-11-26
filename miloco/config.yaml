@@ -9,7 +9,7 @@ ingress: false
 init: false
 arch:
   - amd64
-  - arm64
+  - aarch64
 host_network: true
 ports:
   28800/tcp: 28800
