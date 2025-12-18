@@ -1,7 +1,7 @@
 name: Scrcpy Web
 slug: scrcpy
 description: Web client prototype for scrcpy
-version: 0.8.1
+version: 0.8.1-a1
 url: https://github.com/NetrisTV/ws-scrcpy
 webui: http://[HOST]:[PORT:25555]
 panel_icon: mdi:android
