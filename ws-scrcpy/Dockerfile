@@ -1,4 +1,4 @@
-FROM ghcr.nju.edu.cn/basepkg/alpine
+FROM ghcr.nju.edu.cn/basepkg/alpine:3.21
 
 ARG VERSION=0.8.1
 ARG GITHUB_DOMAIN=ghrp.hacs.vip
