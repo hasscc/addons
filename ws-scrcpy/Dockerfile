@@ -3,6 +3,7 @@ FROM ghcr.nju.edu.cn/basepkg/alpine
 ARG VERSION=0.8.1
 ARG GITHUB_DOMAIN=ghrp.hacs.vip
 ARG BASHIO_VERSION=v0.17.0
+ENV ANDROID_HOME=/config/.android
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
     apk add --no-cache bash curl jq nodejs npm python3 android-tools nginx && \
@@ -27,9 +28,9 @@ RUN set -eux; \
     rm -rf /root/.npm /tmp/*; \
     apk del --no-cache .build-deps; \
     chmod a+x /run.sh; \
+    mkdir -p "$ANDROID_HOME"; \
+    ln -s "$ANDROID_HOME" /root/.android; \
     pwd;
-
-VOLUME /root/.android
 
 CMD ["/run.sh", "node", "dist/index.js"]
 HEALTHCHECK --interval=1m --start-period=30s CMD nc -zn 0.0.0.0 8000 || exit 1
