@@ -6,3 +6,4 @@ RUN chmod +x /run.sh
 RUN apk add --no-cache jq
 
 ENTRYPOINT ["/run.sh"]
+CMD qwen3asr2api
