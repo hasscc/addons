@@ -1,0 +1,22 @@
+name: Qwen ASR
+slug: qwen-asr
+description: 免费的语音识别模型
+version: 0.1.0-a0
+image: ghcr.nju.edu.cn/aahl/qwen-asr2api:main
+url: https://github.com/aahl/qwen-asr2api
+webui: https://[HOST]:[PORT:28820]
+panel_icon: mdi:microphone
+ingress: false
+init: false
+arch:
+  - amd64
+  - aarch64
+ports:
+  80/tcp: 28820
+map: []
+schema:
+  envs:
+    - match(^[A-Z0-9_]+=.*$)
+options:
+  envs:
+    - TZ=Asia/Shanghai
