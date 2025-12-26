@@ -5,12 +5,12 @@
 推荐配合 [ai_conversation](https://github.com/hasscc/ai-conversation) 集成使用。
 
 API地址:
-- http://4e0de88e-qwen-asr/v1
-- http://homeassistant.local:28820/v1
+- `http://4e0de88e-qwen-asr/v1`
+- `http://homeassistant.local:28820/v1`
 
 支持模型:
-- `qwen3-asr-flash`
-- `qwen-qwen3-asr:itn` 启用逆文本标准化（ITN）
+- `qwen3-asr`
+- `qwen3-asr:itn` 启用逆文本标准化
 
 使用示例:
 ```shell
