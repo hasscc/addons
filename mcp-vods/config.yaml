@@ -1,0 +1,23 @@
+name: VODs MCP Server
+slug: mcp-vods
+description: 一个用于追剧/追番的MCP服务器
+version: 0.1.3-a1
+url: https://github.com/aahl/mcp-vods
+webui: https://[HOST]:[PORT:28821]
+panel_icon: mdi:television
+ingress: false
+init: false
+arch:
+  - amd64
+  - aarch64
+ports:
+  80/tcp: 28821
+map: []
+schema:
+  envs:
+    - match(^[A-Z0-9_]+=.*$)
+options:
+  envs:
+    - VOD_CONFIG_URL=https://ghrp.hacs.vip/raw/hafrey1/LunaTV-config/refs/heads/main/config.json
+    - MITV_LIST_CFG=
+    - TZ=Asia/Shanghai
