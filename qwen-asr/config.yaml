@@ -1,7 +1,7 @@
 name: Qwen ASR
 slug: qwen-asr
 description: 免费的语音识别模型
-version: 0.1.0-a1
+version: 0.1.0-a2
 url: https://github.com/aahl/qwen-asr2api
 webui: https://[HOST]:[PORT:28820]
 panel_icon: mdi:microphone
