@@ -1,0 +1,23 @@
+name: 智谱TTS
+slug: zai-tts
+description: 免费的语音合成模型
+version: 0.1.0-a1
+url: https://github.com/aahl/zai-tts2api
+webui: https://[HOST]:[PORT:28823]
+panel_icon: mdi:microphone
+ingress: false
+init: false
+arch:
+  - amd64
+  - aarch64
+ports:
+  80/tcp: 28823
+map: []
+schema:
+  envs:
+    - match(^[A-Z0-9_]+=.*$)
+options:
+  envs:
+    - TZ=Asia/Shanghai
+    - ZAI_USERID=
+    - ZAI_TOKEN=
