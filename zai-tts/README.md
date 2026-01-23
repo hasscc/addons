@@ -4,6 +4,8 @@
 
 安装后切换到配置页面，添加`ZAI_USERID`和`ZAI_TOKEN`环境变量，可在[`audio.z.ai`](https://audio.z.ai)登录后，通过F12开发者工具在控制台执行`localStorage['auth-storage']`获取。
 
+[![添加加载项仓库](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgitee.com%2Fhasscc%2Faddons)
+
 API地址:
 - `http://4e0de88e-zai-tts/v1`
 - `http://homeassistant.local:28823/v1`

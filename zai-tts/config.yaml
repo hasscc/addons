@@ -1,7 +1,7 @@
 name: 智谱TTS
 slug: zai-tts
-description: 免费的语音合成模型
-version: 0.1.0-a1
+description: 免费的语音合成模型，支持克隆音色
+version: 0.1.0-a2
 url: https://github.com/aahl/zai-tts2api
 webui: https://[HOST]:[PORT:28823]
 panel_icon: mdi:microphone
