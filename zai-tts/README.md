@@ -1,8 +1,8 @@
 # 智谱TTS
 
-免费快速的语音合成大模型API。
+免费快速的语音合成大模型API。 推荐配合 [ai_conversation](https://github.com/hasscc/ai-conversation) 集成使用。
 
-推荐配合 [ai_conversation](https://github.com/hasscc/ai-conversation) 集成使用。
+安装后切换到配置页面，添加`ZAI_USERID`和`ZAI_TOKEN`环境变量，可在[`audio.z.ai`](https://audio.z.ai)登录后，通过F12开发者工具在控制台执行`localStorage['auth-storage']`获取。
 
 API地址:
 - `http://4e0de88e-zai-tts/v1`
