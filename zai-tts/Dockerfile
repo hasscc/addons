@@ -1,4 +1,4 @@
-FROM ghcr.nju.edu.cn/aahl/zai-tts2api:main
+FROM ghcr.io/aahl/zai-tts2api:main
 
 COPY rootfs /
 
