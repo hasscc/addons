@@ -13,7 +13,7 @@ API地址:
 curl --request POST \
   --url http://homeassistant.local:28823/v1/audio/speech \
   --header 'Content-Type: application/json' \
-  --data '{"voice":"system_001", "text":"hello", "speed":1.0, "volume":1}' \
+  --data '{"voice":"system_001", "input":"hello", "speed":1.0, "volume":1}' \
   --output output.wav
 ```
 
