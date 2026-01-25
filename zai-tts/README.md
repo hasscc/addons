@@ -26,7 +26,7 @@ curl --request POST \
    > 服务商: 自定义; 接口: `http://4e0de88e-zai-tts/v1`; 密钥留空
 3. 添加TTS模型，模型ID随意，额外的请求参数参考:
    ```yaml
-   voice: system_003 # 支持克隆的音色
+   voice: system_002 # 支持克隆的音色ID
    speed: 1.5
    response_format: wav
    ```
@@ -35,5 +35,5 @@ curl --request POST \
 
 ### 🎼 内置音色
 `system_001`: 活泼女声
-`system_002`: 通用男声
-`system_003`: 温柔女声
+`system_002`: 温柔女声
+`system_003`: 通用男声
