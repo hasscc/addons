@@ -1,0 +1,21 @@
+name: 千问TTS
+slug: qwen-tts
+description: 免费的语音合成模型
+version: 0.1.0-a1
+url: https://github.com/aahl/qwen-tts2api
+webui: https://[HOST]:[PORT:28825]
+panel_icon: mdi:microphone
+ingress: false
+init: false
+arch:
+  - amd64
+  - aarch64
+ports:
+  80/tcp: 28825
+map: []
+schema:
+  envs:
+    - match(^[A-Z0-9_]+=.*$)
+options:
+  envs:
+    - TZ=Asia/Shanghai
