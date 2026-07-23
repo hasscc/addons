@@ -38,4 +38,5 @@ hassio_api: true
 hassio_role: manager
 homeassistant_api: true
 auth_api: true
+docker_api: true
 startup: services

@@ -26,7 +26,7 @@ RUN set -eux; \
     chmod a+x /opt/bin/*; \
     sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories; \
     apk add --no-cache bash tmux ttyd unzip netcat-openbsd; \
-    apk add --no-cache ripgrep fzf procps; \
+    apk add --no-cache ripgrep fzf procps docker-cli; \
     mkdir -p bashio; \
     wget https://${GITHUB_DOMAIN}/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz -O- | tar zxvf - --strip 1 -C bashio; \
     mv bashio/lib /usr/lib/bashio; \

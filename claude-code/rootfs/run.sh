@@ -1,5 +1,7 @@
 #!/usr/bin/env bashio
 
+bashio::log.info "Booting..."
+
 set -ex
 
 CONFIG_PATH=/data/options.json
@@ -7,7 +9,9 @@ CONFIG_PATH=/data/options.json
     echo "$key=$val" >> /tmp/.env
 done
 if [ -f /tmp/.env ]; then
-    export $(cat /tmp/.env | xargs)
+    set -a
+    source /tmp/.env
+    set +a
 fi
 
 exec "$@"
