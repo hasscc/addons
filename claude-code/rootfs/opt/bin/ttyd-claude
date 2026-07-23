@@ -1,0 +1,13 @@
+#!/bin/bash
+
+exec /opt/bin/image-service &
+
+ttyd \
+    --port ${TTYD_PORT:-7681} \
+    --interface 0.0.0.0 \
+    --writable \
+    --ping-interval 30 \
+    --client-option reconnect=5 \
+    "${TMUX_WRAPPER_PATH:-/opt/bin/tmux-claude}"
+
+sleep inf

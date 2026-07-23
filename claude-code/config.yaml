@@ -1,0 +1,41 @@
+name: Claude Code
+slug: claude-code
+description: Enhanced terminal interface for Anthropic's Claude Code CLI with persistent auth, package management, and image paste support.
+version: 2026.7.22
+url: https://github.com/aahl/claude-code
+webui: https://[HOST]:[PORT:27680]
+panel_icon: mdi:code-braces-box
+ingress: true
+ingress_port: 7680
+init: false
+arch:
+  - amd64
+  - aarch64
+ports:
+  7680/tcp: 27680
+  7681/tcp: 27681
+ports_description:
+  7680/tcp: "Image upload service and web interface"
+  7681/tcp: "ttyd terminal (embedded in web interface)"
+map:
+  - config:rw
+  - share
+schema:
+  envs:
+    - match(^\w+=.*$)
+options:
+  envs:
+    - CLAUDE_LAUNCH_CMD=claude --permission-mode auto
+    - ANTHROPIC_BASE_URL=
+    - ANTHROPIC_AUTH_TOKEN=
+    - ANTHROPIC_MODEL=opus
+    - ANTHROPIC_DEFAULT_OPUS_MODEL=opus
+    - ANTHROPIC_DEFAULT_SONNET_MODEL=sonnet
+    - ANTHROPIC_DEFAULT_HAIKU_MODEL=haiku
+    - CLAUDE_CODE_SUBAGENT_MODEL=sonnet
+
+hassio_api: true
+hassio_role: manager
+homeassistant_api: true
+auth_api: true
+startup: services

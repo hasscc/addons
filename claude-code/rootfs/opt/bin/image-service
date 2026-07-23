@@ -1,0 +1,59 @@
+#!/usr/bin/env bashio
+
+set -e
+set -o pipefail
+
+# Start image upload service
+start_image_service() {
+    local service_dir="/opt/image-service"
+    local server_file="${service_dir}/server.js"
+
+    # Export environment variables for the image service
+    export IMAGE_SERVICE_PORT="${WEB_PORT}"
+    export TTYD_PORT="${TTYD_PORT:-7681}"
+    export UPLOAD_DIR="/tmp/images"
+
+    bashio::log.info "Starting image upload service on port ${IMAGE_SERVICE_PORT}..."
+
+    # Create upload directory if it doesn't exist
+    mkdir -p "${UPLOAD_DIR}"
+    chmod 755 "${UPLOAD_DIR}"
+
+    # Check if server.js exists
+    if [ ! -f "${server_file}" ]; then
+        bashio::log.error "server.js not found at ${server_file}"
+        ls -la "${service_dir}"
+        return 1
+    fi
+
+    # Check if node_modules exists
+    if [ ! -d "${service_dir}/node_modules" ]; then
+        bashio::log.error "node_modules not found in ${service_dir}"
+        bashio::log.info "Attempting to install dependencies..."
+        cd "${service_dir}" && npm install || bashio::log.error "npm install failed"
+        cd - > /dev/null
+    fi
+
+    # Start with better error logging (run from current directory with absolute path)
+    bashio::log.info "Starting Node.js service from ${server_file}..."
+    node "${server_file}" 2>&1 | while IFS= read -r line; do
+        bashio::log.info "[Image Service] $line"
+    done &
+
+    # Store the PID for potential cleanup
+    local image_service_pid=$!
+    bashio::log.info "Image service started (PID: ${image_service_pid})"
+
+    # Give it a moment to start
+    sleep 3
+
+    # Check if it's running
+    if kill -0 "${image_service_pid}" 2>/dev/null; then
+        bashio::log.info "Image service is running successfully"
+    else
+        bashio::log.error "Image service failed to start! Check logs above for errors"
+        return 1
+    fi
+}
+
+start_image_service

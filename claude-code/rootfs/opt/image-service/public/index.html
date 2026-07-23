@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Terminal Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #header {
+            background: #2d2d2d;
+            padding: 8px 16px;
+            border-bottom: 1px solid #3d3d3d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        #header-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #ccc;
+        }
+
+        .header-btn {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-btn:hover {
+            background: #005a9e;
+        }
+
+        .header-btn:active {
+            background: #004578;
+        }
+
+        .header-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #voice-btn.recording {
+            background: #d9534f;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        #status {
+            font-size: 12px;
+            color: #888;
+            padding: 0 12px;
+            transition: all 0.2s ease;
+        }
+
+        #status.success {
+            color: #4ec9b0;
+        }
+
+        #status.error {
+            color: #f48771;
+        }
+
+        #status:hover {
+            opacity: 0.8;
+        }
+
+        #status[style*="cursor: pointer"] {
+            user-select: all;
+        }
+
+        #terminal-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #terminal-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #1e1e1e;
+        }
+
+        #drop-zone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 122, 204, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        #drop-zone.active {
+            display: flex;
+        }
+
+        #drop-zone-text {
+            font-size: 24px;
+            font-weight: 500;
+            color: white;
+            text-align: center;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Voice Modal */
+        #voice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        #voice-modal.active {
+            display: flex;
+        }
+
+        #voice-modal-content {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #3d3d3d;
+        }
+
+        #voice-modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        #voice-transcript {
+            background: #1e1e1e;
+            border: 1px solid #3d3d3d;
+            border-radius: 4px;
+            padding: 12px;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #voice-transcript.listening {
+            border-color: #d9534f;
+        }
+
+        #voice-transcript:empty::before {
+            content: "Click 'Start Recording' and speak...";
+            color: #666;
+            font-style: italic;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .modal-btn-primary {
+            background: #007acc;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: #005a9e;
+        }
+
+        .modal-btn-danger {
+            background: #d9534f;
+            color: white;
+        }
+
+        .modal-btn-danger:hover {
+            background: #c9302c;
+        }
+
+        .modal-btn-secondary {
+            background: #555;
+            color: white;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #666;
+        }
+
+        #voice-status {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+            min-height: 18px;
+        }
+
+        #voice-status.listening {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <div id="header-title">Claude Terminal Pro - Voice & image support</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span id="status"></span>
+                <button id="voice-btn" class="header-btn">
+                    <span>🎤</span>
+                    <span>Voice Input</span>
+                </button>
+                <button id="upload-btn" class="header-btn">
+                    <span>📎</span>
+                    <span>Upload Image</span>
+                </button>
+            </div>
+        </div>
+        <div id="terminal-container">
+            <iframe id="terminal-frame" src="about:blank"></iframe>
+            <div id="drop-zone">
+                <div id="drop-zone-text">Drop image here to upload</div>
+            </div>
+        </div>
+    </div>
+    <input type="file" id="file-input" accept="image/*">
+
+    <!-- Voice Input Modal -->
+    <div id="voice-modal">
+        <div id="voice-modal-content">
+            <div id="voice-modal-title">🎤 Voice Input</div>
+            <div id="voice-status"></div>
+            <div id="voice-transcript" contenteditable="true"></div>
+            <div class="modal-buttons">
+                <button id="voice-record-btn" class="modal-btn modal-btn-danger">Start Recording</button>
+                <button id="voice-copy-btn" class="modal-btn modal-btn-primary" style="display: none;">Copy Text</button>
+                <button id="voice-close-btn" class="modal-btn modal-btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ttydPort = 7681;
+        let uploadDir = '/data/images';
+
+        // Fetch configuration and load ttyd
+        // Use relative paths for Home Assistant ingress compatibility
+        fetch('config')
+            .then(res => res.json())
+            .then(config => {
+                ttydPort = config.ttydPort;
+                uploadDir = config.uploadDir;
+                console.log('Config loaded:', config);
+                // Load ttyd via proxy endpoint
+                loadTerminal();
+            })
+            .catch(err => {
+                console.error('Failed to load config:', err);
+                // Fallback: load terminal anyway
+                loadTerminal();
+            });
+
+        function loadTerminal() {
+            const iframe = document.getElementById('terminal-frame');
+            // Use relative path for Home Assistant ingress compatibility
+            iframe.src = 'terminal/';
+        }
+
+        const status = document.getElementById('status');
+        const uploadBtn = document.getElementById('upload-btn');
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+
+        function setStatus(message, type = '', persistent = false) {
+            status.textContent = message;
+            status.className = type;
+            if (message && !persistent) {
+                setTimeout(() => setStatus(''), 5000);
+            }
+        }
+
+        async function uploadImage(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                setStatus('Please select an image file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            uploadBtn.innerHTML = '<span class="spinner"></span><span>Uploading...</span>';
+            uploadBtn.disabled = true;
+
+            try {
+                // Use relative path for Home Assistant ingress compatibility
+                const response = await fetch('upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Check if response is ok (status 200-299)
+                if (!response.ok) {
+                    const text = await response.text();
+                    let errorMessage = 'Upload failed';
+                    try {
+                        const errorJson = JSON.parse(text);
+                        errorMessage = errorJson.error || errorMessage;
+                    } catch {
+                        errorMessage = text || errorMessage;
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const filePath = result.path;
+
+                    // Display full path persistently with click-to-copy functionality
+                    setStatus(`📋 ${filePath} (click to select)`, 'success', true);
+                    console.log('Image uploaded:', filePath);
+
+                    // Make status clickable to select text (works in iframes)
+                    status.style.cursor = 'pointer';
+                    status.style.userSelect = 'text';
+
+                    status.onclick = () => {
+                        // Try modern clipboard API first
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(filePath)
+                                .then(() => {
+                                    const originalText = status.textContent;
+                                    setStatus('✓ Copied!', 'success', false);
+                                    setTimeout(() => {
+                                        setStatus(originalText, 'success', true);
+                                    }, 2000);
+                                })
+                                .catch(() => {
+                                    selectText();
+                                });
+                        } else {
+                            // Fallback: select the text so user can copy with Cmd+C
+                            selectText();
+                        }
+                    };
+
+                    // Auto-copy to clipboard and try to paste into terminal
+                    autoCopyAndPaste(filePath);
+
+                    // Helper to select text (works in all contexts)
+                    function selectText() {
+                        const range = document.createRange();
+                        const selection = window.getSelection();
+
+                        // Clear any existing selection
+                        selection.removeAllRanges();
+
+                        // Create a temporary text node with just the path
+                        const tempDiv = document.createElement('div');
+                        tempDiv.style.position = 'absolute';
+                        tempDiv.style.left = '-9999px';
+                        tempDiv.textContent = result.path;
+                        document.body.appendChild(tempDiv);
+
+                        // Select the path text
+                        range.selectNodeContents(tempDiv);
+                        selection.addRange(range);
+
+                        // Try execCommand as fallback for copying
+                        try {
+                            const copied = document.execCommand('copy');
+                            if (copied) {
+                                setStatus('✓ Copied! (Cmd+C)', 'success', false);
+                            } else {
+                                setStatus('✓ Selected! Press Cmd+C to copy', 'success', false);
+                            }
+                        } catch (err) {
+                            setStatus('✓ Selected! Press Cmd+C to copy', 'success', false);
+                        }
+
+                        // Clean up and restore message
+                        setTimeout(() => {
+                            document.body.removeChild(tempDiv);
+                            selection.removeAllRanges();
+                            setStatus(`📋 ${result.path} (click to select)`, 'success', true);
+                        }, 3000);
+                    }
+                } else {
+                    setStatus(result.error || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                setStatus('Upload failed: ' + error.message, 'error');
+            } finally {
+                uploadBtn.innerHTML = '<span>📎</span><span>Upload Image</span>';
+                uploadBtn.disabled = false;
+            }
+        }
+
+        // Upload button click
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                uploadImage(e.target.files[0]);
+            }
+        });
+
+        // Paste handling
+        document.addEventListener('paste', async (e) => {
+            console.log('Paste event detected');
+            const items = e.clipboardData?.items;
+
+            if (!items) {
+                console.log('No clipboard items found');
+                return;
+            }
+
+            console.log('Clipboard items:', Array.from(items).map(i => i.type));
+
+            for (let item of items) {
+                if (item.type.startsWith('image/')) {
+                    console.log('Image found in clipboard:', item.type);
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    if (file) {
+                        console.log('File extracted from clipboard:', file.name, file.size);
+                        await uploadImage(file);
+                    } else {
+                        console.error('Failed to extract file from clipboard item');
+                    }
+                    break;
+                }
+            }
+        });
+
+        // Also handle paste on window for better compatibility
+        window.addEventListener('paste', async (e) => {
+            // This ensures paste works even when iframe has focus
+            console.log('Window paste event detected');
+        });
+
+        // Drag and drop handling
+        let dragCounter = 0;
+
+        document.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            dragCounter++;
+            if (dragCounter === 1) {
+                dropZone.classList.add('active');
+            }
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter === 0) {
+                dropZone.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dragCounter = 0;
+            dropZone.classList.remove('active');
+
+            const files = e.dataTransfer?.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    await uploadImage(file);
+                } else {
+                    setStatus('Please drop an image file', 'error');
+                }
+            }
+        });
+
+        // Auto-copy path and attempt to paste into terminal
+        async function autoCopyAndPaste(filePath) {
+            const iframe = document.getElementById('terminal-frame');
+
+            // Step 1: Copy to clipboard
+            const copied = await copyToClipboard(filePath);
+
+            if (copied) {
+                // Step 2: Focus the terminal iframe
+                try {
+                    iframe.contentWindow.focus();
+                    iframe.focus();
+
+                    // Step 3: Try to send the text directly
+                    // Note: This might not work due to iframe security, but we'll try
+                    setTimeout(() => {
+                        // Try to trigger a paste event in the iframe
+                        const pasteEvent = new ClipboardEvent('paste', {
+                            clipboardData: new DataTransfer(),
+                            bubbles: true,
+                            cancelable: true
+                        });
+
+                        // Try to add the text to the clipboard data
+                        try {
+                            pasteEvent.clipboardData.setData('text/plain', filePath);
+                        } catch (e) {
+                            console.log('Cannot set clipboard data in event:', e);
+                        }
+
+                        iframe.contentWindow.document.dispatchEvent(pasteEvent);
+
+                        // Alternative: Try to send keyboard events
+                        sendTextToTerminal(filePath);
+
+                        setStatus(`📋 ${filePath} - Ready to use! (path in clipboard)`, 'success', true);
+                    }, 100);
+
+                } catch (err) {
+                    console.log('Cannot access iframe for auto-paste:', err);
+                    setStatus(`📋 ${filePath} - Copied! Paste into terminal (Cmd+V)`, 'success', true);
+                }
+            }
+        }
+
+        // Helper to copy text to clipboard
+        async function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {
+                    console.log('Clipboard API failed, trying fallback:', err);
+                    return fallbackCopyToClipboard(text);
+                }
+            } else {
+                return fallbackCopyToClipboard(text);
+            }
+        }
+
+        // Fallback clipboard copy using execCommand
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'absolute';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+
+            try {
+                const copied = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return copied;
+            } catch (err) {
+                document.body.removeChild(textArea);
+                return false;
+            }
+        }
+
+        // Try to send text to terminal by simulating keyboard input
+        function sendTextToTerminal(text) {
+            const iframe = document.getElementById('terminal-frame');
+
+            // Try to send each character as a keyboard event
+            // This might not work due to iframe restrictions, but worth trying
+            try {
+                const iframeDoc = iframe.contentWindow.document;
+                const terminal = iframeDoc.querySelector('.xterm-helper-textarea') ||
+                               iframeDoc.querySelector('textarea') ||
+                               iframeDoc.body;
+
+                if (terminal) {
+                    // Try to insert text
+                    if (terminal.value !== undefined) {
+                        terminal.value = text;
+                        terminal.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+
+                    // Try to send keyboard events for each character
+                    for (const char of text) {
+                        const keyEvent = new KeyboardEvent('keypress', {
+                            key: char,
+                            char: char,
+                            keyCode: char.charCodeAt(0),
+                            bubbles: true
+                        });
+                        terminal.dispatchEvent(keyEvent);
+                    }
+
+                    console.log('Attempted to send text to terminal');
+                }
+            } catch (err) {
+                console.log('Cannot send keyboard events to iframe:', err);
+                // This is expected due to cross-origin restrictions
+                // The clipboard copy is the fallback
+            }
+        }
+
+        // Prevent default drag behavior on iframe
+        window.addEventListener('load', () => {
+            const iframe = document.getElementById('terminal-frame');
+            iframe.addEventListener('dragover', (e) => e.preventDefault());
+            iframe.addEventListener('drop', (e) => e.preventDefault());
+        });
+
+        // ========================================
+        // Voice Input with Web Speech API
+        // ========================================
+
+        const voiceBtn = document.getElementById('voice-btn');
+        const voiceModal = document.getElementById('voice-modal');
+        const voiceRecordBtn = document.getElementById('voice-record-btn');
+        const voiceCopyBtn = document.getElementById('voice-copy-btn');
+        const voiceCloseBtn = document.getElementById('voice-close-btn');
+        const voiceTranscript = document.getElementById('voice-transcript');
+        const voiceStatus = document.getElementById('voice-status');
+
+        let recognition = null;
+        let isRecording = false;
+
+        // Check if Web Speech API is supported
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US'; // Default to English, can be made configurable
+
+            console.log('Web Speech API is supported!');
+        } else {
+            console.warn('Web Speech API is not supported in this browser');
+            voiceBtn.disabled = true;
+            voiceBtn.title = 'Voice input not supported in this browser';
+        }
+
+        // Open voice modal
+        voiceBtn.addEventListener('click', () => {
+            voiceModal.classList.add('active');
+            voiceTranscript.textContent = '';
+            voiceStatus.textContent = '';
+            voiceCopyBtn.style.display = 'none';
+        });
+
+        // Close voice modal
+        voiceCloseBtn.addEventListener('click', () => {
+            if (isRecording) {
+                stopRecording();
+            }
+            voiceModal.classList.remove('active');
+        });
+
+        // Click outside modal to close
+        voiceModal.addEventListener('click', (e) => {
+            if (e.target === voiceModal) {
+                if (isRecording) {
+                    stopRecording();
+                }
+                voiceModal.classList.remove('active');
+            }
+        });
+
+        // Start/Stop recording
+        voiceRecordBtn.addEventListener('click', () => {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        });
+
+        function startRecording() {
+            if (!recognition) {
+                voiceStatus.textContent = '❌ Speech recognition not available';
+                voiceStatus.className = 'error';
+                return;
+            }
+
+            isRecording = true;
+            voiceRecordBtn.textContent = 'Stop Recording';
+            voiceRecordBtn.className = 'modal-btn modal-btn-danger';
+            voiceStatus.textContent = '🎤 Listening... (speak now)';
+            voiceStatus.classList.add('listening');
+            voiceTranscript.classList.add('listening');
+
+            let finalTranscript = '';
+            let interimTranscript = '';
+
+            recognition.onresult = (event) => {
+                interimTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                // Display both final and interim results
+                voiceTranscript.textContent = finalTranscript + interimTranscript;
+
+                // Auto-scroll to bottom
+                voiceTranscript.scrollTop = voiceTranscript.scrollHeight;
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                let errorMessage = 'Error: ';
+
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMessage += 'No speech detected. Try speaking again.';
+                        break;
+                    case 'audio-capture':
+                        errorMessage += 'No microphone found. Check your settings.';
+                        break;
+                    case 'not-allowed':
+                        errorMessage += 'Microphone access denied. Please allow access.';
+                        break;
+                    default:
+                        errorMessage += event.error;
+                }
+
+                voiceStatus.textContent = '❌ ' + errorMessage;
+                voiceStatus.classList.remove('listening');
+                stopRecording();
+            };
+
+            recognition.onend = () => {
+                if (isRecording) {
+                    // Restart if it stops but we're still recording
+                    recognition.start();
+                }
+            };
+
+            try {
+                recognition.start();
+                console.log('Speech recognition started');
+            } catch (err) {
+                console.error('Failed to start recognition:', err);
+                voiceStatus.textContent = '❌ Failed to start recording';
+                isRecording = false;
+            }
+        }
+
+        function stopRecording() {
+            if (!recognition) return;
+
+            isRecording = false;
+            recognition.stop();
+
+            voiceRecordBtn.textContent = 'Start Recording';
+            voiceRecordBtn.className = 'modal-btn modal-btn-primary';
+            voiceStatus.textContent = '✓ Recording stopped';
+            voiceStatus.classList.remove('listening');
+            voiceTranscript.classList.remove('listening');
+
+            if (voiceTranscript.textContent.trim()) {
+                voiceCopyBtn.style.display = 'inline-block';
+                voiceStatus.textContent = '✓ Transcript ready! Edit if needed, then copy.';
+            }
+
+            console.log('Speech recognition stopped');
+        }
+
+        // Copy transcript to clipboard
+        voiceCopyBtn.addEventListener('click', async () => {
+            const text = voiceTranscript.textContent.trim();
+
+            if (!text) {
+                voiceStatus.textContent = '❌ No text to copy';
+                return;
+            }
+
+            // Try clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    voiceStatus.textContent = '✓ Copied to clipboard! Paste into terminal.';
+                    voiceStatus.className = 'success';
+                } catch (err) {
+                    fallbackCopy(text);
+                }
+            } else {
+                fallbackCopy(text);
+            }
+        });
+
+        function fallbackCopy(text) {
+            // Fallback using execCommand
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            tempTextArea.style.position = 'absolute';
+            tempTextArea.style.left = '-9999px';
+            document.body.appendChild(tempTextArea);
+
+            tempTextArea.select();
+
+            try {
+                const copied = document.execCommand('copy');
+                if (copied) {
+                    voiceStatus.textContent = '✓ Copied! Paste into terminal.';
+                    voiceStatus.className = 'success';
+                } else {
+                    voiceStatus.textContent = '⚠️ Select text above and press Cmd+C to copy';
+                }
+            } catch (err) {
+                voiceStatus.textContent = '⚠️ Select text above and press Cmd+C to copy';
+            }
+
+            document.body.removeChild(tempTextArea);
+        }
+
+        // Keyboard shortcuts in voice modal
+        voiceModal.addEventListener('keydown', (e) => {
+            // Escape to close
+            if (e.key === 'Escape') {
+                if (isRecording) {
+                    stopRecording();
+                }
+                voiceModal.classList.remove('active');
+            }
+
+            // Enter to copy (if text exists and not recording)
+            if (e.key === 'Enter' && !isRecording && voiceTranscript.textContent.trim()) {
+                voiceCopyBtn.click();
+            }
+
+            // Space to start/stop recording (if not editing transcript)
+            if (e.key === ' ' && e.target !== voiceTranscript) {
+                e.preventDefault();
+                voiceRecordBtn.click();
+            }
+        });
+
+        console.log('Voice input module loaded');
+    </script>
+</body>
+</html>

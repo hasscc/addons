@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Claude code is launching..."
+tmux -u new -A -s claude bash -c "${CLAUDE_LAUNCH_CMD:-claude}"
